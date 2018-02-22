@@ -4,12 +4,38 @@ import './App.css';
 //import {TodoStore} from './model/TodoStore';
 import {ObservableTodoStore} from './model/ObservableTodoStore';
 import {observer} from "mobx-react";
-import {TodoList} from './component/TodoList';
+import {extendObservable,observable} from "mobx";
+import {TodoList} from './component/TodoList.js';
 
 
 
 class App extends Component {
+  constructor(props){
+    super(props);
+   //this.todoStore = new ObservableTodoStore();
+   extendObservable(this,{
+    todoStore: new ObservableTodoStore(),
+    count:0
+   })
+   
+    this.todoStore.addTodo("task1");
+    this.todoStore.addTodo("task2");
+  }
+
+  addTodo=(task)=>{
+    console.log("before",this.todoStore);
+    const store = this.todoStore;
+    store.addTodo(task);
+    this.todoStore = store;
+    console.log("after",this.todoStore);
+    this.count++;
+  }
+  increase=()=>{
+    this.count++;
+  }
+
   render() {
+    console.log("App.render()");
     /*var todoStore = new TodoStore();
     todoStore.addTodo("task1");
     console.log(todoStore.report());
@@ -23,10 +49,10 @@ class App extends Component {
     console.log(todoStore.report());*/
 
 
-    var todoStore = new ObservableTodoStore();
+   /* var todoStore = new ObservableTodoStore();
     todoStore.addTodo("task1");
     todoStore.addTodo("task2");
-    
+    */
 
     return (
       <div className="App">
@@ -37,7 +63,9 @@ class App extends Component {
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
-        <TodoList store={todoStore}/>
+        <TodoList store={this.todoStore} addTodo={this.addTodo}/>
+        <button onClick={this.increase}>Increase</button>
+        <span>{this.count}</span>
       </div>
     );
   }

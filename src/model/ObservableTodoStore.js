@@ -1,7 +1,7 @@
-import {observable,computed,autorun} from "mobx";
+import {observable,computed,autorun,extendObservable} from "mobx";
 export class ObservableTodoStore{
 	
-	todos = observable.array();
+	todos = extendObservable([]);
 	constructor(){
     	autorun( () => console.log("hello",this.todos)) ;
 	}
